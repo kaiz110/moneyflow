@@ -8,7 +8,7 @@ const SignInScreen = ({navigation}) => {
     const [password, setPassword] = useState('')
 
     const onButtonPress = async () => {
-        firebase.auth().signInWithEmailAndPassword('dinh@gami.com','123456')
+        firebase.auth().signInWithEmailAndPassword('test@gmail.com','123456')
             .then(user => {
                 console.log('user',user)
             }).catch(err => console.log('error : ', err))
