@@ -1,7 +1,10 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { StyleSheet, View, Text, Button,
      Animated, FlatList, PanResponder, Dimensions } from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
 import firebase from 'firebase'
+import { interpolate } from 'react-native-reanimated'
+import InputModal from '../components/InputModal'
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
 const SCREEN_WIGHT = Dimensions.get('window').width
@@ -9,9 +12,13 @@ const SCREEN_WIGHT = Dimensions.get('window').width
 const zone = SCREEN_HEIGHT * 0.21
 
 const HomeScreen = () => {
+    const LinearGradientAnimated = Animated.createAnimatedComponent(LinearGradient)
     const position = useRef(new Animated.ValueXY()).current
     const scale = useRef(new Animated.Value(1)).current
-    const opacity = useRef(new Animated.Value(1)).current
+    const cardOpacity = useRef(new Animated.Value(1)).current
+    
+    const [modalVisible, setModalVisible] = useState(false)
+
     const pan = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onPanResponderGrant: () => {
@@ -26,28 +33,34 @@ const HomeScreen = () => {
         },
         onPanResponderRelease: (e,g) => {
             if(g.dy > zone || g.dy < -zone){
+                setModalVisible(true)
                 Animated.sequence([
                     // end
-                    Animated.timing(opacity, {
+                    Animated.timing(cardOpacity, {
                         toValue: 0,
-                        duration: 500
+                        duration: 500,
+                        useNativeDriver: false
                     }),
                     // ->
                     Animated.timing(scale, {
                         toValue: 0,
-                        duration: 1
+                        duration: 1,
+                        useNativeDriver: false
                     }),
                     Animated.timing(position,{
                         toValue: {x: 0, y: 0},
-                        duration: 1
+                        duration: 1,
+                        useNativeDriver: false
                     }),
                     // start
                     Animated.parallel([
-                        Animated.spring(opacity, {
-                            toValue: 1
+                        Animated.spring(cardOpacity, {
+                            toValue: 1,
+                            useNativeDriver: false
                         }),
                         Animated.spring(scale, {
-                            toValue: 1
+                            toValue: 1,
+                            useNativeDriver: false
                         }) 
                     ])
                     
@@ -69,57 +82,63 @@ const HomeScreen = () => {
         }
     })
 
-    const action = () => {
-        Animated.loop(
-            Animated.sequence([
-                Animated.spring(position, {
-                    toValue: {
-                        x: 0,
-                        y: 100
-                    },
-                    useNativeDriver: false
-                }),
-                Animated.spring(position,{
-                    toValue: {
-                        x: 0,
-                        y: 0
-                    },
-                    useNativeDriver: false
-                }),   
-            ])  
-        ).start()
+    const zoneColor = (height) => {
+        const opacity = position.y.interpolate({
+            inputRange: height > 0 ? [0,height] : [height,0],
+            outputRange: height > 0 ? [0,1] : [1,0]
+        })
+
+        return [styles.background, {
+            opacity
+        }]
     }
 
-    const onLogout = () => {
-        firebase.auth().signOut().then(()=>console.log('sign out successed.'))
-    } 
-
     return <View style={styles.container}>  
-        <Button
-            title='action'
-            onPress={action}
+        <LinearGradientAnimated
+            colors={['red','transparent']}
+            style={zoneColor(-SCREEN_HEIGHT/2)}
         />
-
+        <LinearGradientAnimated
+            colors={['transparent','green']}
+            style={zoneColor(SCREEN_HEIGHT/2)}
+        />
+        <Text style={[styles.text, {top: 10}]}>OUT</Text>
         <Animated.View 
             style={[position.getLayout(),styles.card,
-                { transform : [{scale}] , opacity }
-            ]}
+                { transform : [{scale}] , opacity: cardOpacity }]}
             {...pan.panHandlers}
         />
+        <Text style={[styles.text, {bottom: 10}]}>IN</Text>
+
+        
     </View>
 }
 
 const styles = StyleSheet.create({
+    background: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        height: SCREEN_HEIGHT,
+    },
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     card: {
         width: 100,
         height: 100, 
         marginLeft: 10,
-        backgroundColor: 'red'
+        zIndex: 0,
+        backgroundColor: 'yellow'
+    },
+    text: {
+        position: 'absolute',
+        zIndex: -1,
+        margin: 10,
+        fontSize: 27
     }
 })
 
