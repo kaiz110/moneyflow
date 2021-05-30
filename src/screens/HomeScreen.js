@@ -3,7 +3,8 @@ import { StyleSheet, View, Text, Button,
      Animated, FlatList, PanResponder, Dimensions } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import firebase from 'firebase'
-import { interpolate } from 'react-native-reanimated'
+import { useDispatch } from 'react-redux'
+import { fundChange } from '../redux/actions'
 import InputModal from '../components/InputModal'
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
@@ -12,12 +13,16 @@ const SCREEN_WIGHT = Dimensions.get('window').width
 const zone = SCREEN_HEIGHT * 0.21
 
 const HomeScreen = () => {
+    const dispatch = useDispatch()
+    
     const LinearGradientAnimated = Animated.createAnimatedComponent(LinearGradient)
     const position = useRef(new Animated.ValueXY()).current
     const scale = useRef(new Animated.Value(1)).current
     const cardOpacity = useRef(new Animated.Value(1)).current
     
     const [modalVisible, setModalVisible] = useState(false)
+    const [amountMoney, setAmountMoney] = useState('')
+    const [isIn, setIsIn] = useState(false)
 
     const pan = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
@@ -33,6 +38,7 @@ const HomeScreen = () => {
         },
         onPanResponderRelease: (e,g) => {
             if(g.dy > zone || g.dy < -zone){
+                (g.dy > zone) ? setIsIn(true) : setIsIn(false)
                 setModalVisible(true)
                 Animated.sequence([
                     // end
@@ -110,7 +116,24 @@ const HomeScreen = () => {
         />
         <Text style={[styles.text, {bottom: 10}]}>IN</Text>
 
-        
+        <InputModal
+            showModal={modalVisible}
+            title={isIn ? 'In' : 'Out'}
+            input={amountMoney}
+            inputChange={setAmountMoney}
+            confirm={()=>{
+                if(isNaN(+amountMoney)){
+                    if(isIn) dispatch(fundChange(+amountMoney))
+                    else dispatch(fundChange(-+amountMoney))
+                } else {
+
+                }
+
+                setModalVisible(false)
+                setAmountMoney('')
+            }}
+            onClose={() => setModalVisible(false)}
+        />
     </View>
 }
 
