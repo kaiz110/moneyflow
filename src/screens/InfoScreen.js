@@ -3,11 +3,11 @@ import { StyleSheet, View, Text } from 'react-native'
 import { useSelector } from 'react-redux'
 
 const InfoScreen = () => {
-    const state = useSelector(state => state.fund)
+    const out = useSelector(state => state.fund.out)
 
 
     return <View>
-        <Text>Số tiền hiện tại: {state}</Text>
+        <Text>Số tiền ra: {out}</Text>
     </View>
 }
 

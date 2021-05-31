@@ -1,8 +1,15 @@
 
 
-export const fundChange = (amount) => {
+export const moneyIn = (amount) => {
     return {
-        type: 'FUND_CHANGE',
+        type: 'MONEY_IN',
+        payload: amount
+    }
+}
+
+export const moneyOut = (amount) => {
+    return {
+        type: 'MONEY_OUT',
         payload: amount
     }
 }

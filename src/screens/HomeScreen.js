@@ -5,7 +5,7 @@ import { Chip } from 'react-native-elements'
 import { LinearGradient } from 'expo-linear-gradient'
 import firebase from 'firebase'
 import { useDispatch, useSelector } from 'react-redux'
-import { fundChange, historySave } from '../redux/actions'
+import { moneyIn, moneyOut, historySave } from '../redux/actions'
 import InputModal from '../components/InputModal'
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
@@ -16,7 +16,6 @@ const zone = SCREEN_HEIGHT * 0.21
 const HomeScreen = () => {
     const dispatch = useDispatch()
     const tags = useSelector(state => state.tags)
-    const history = useSelector(state => state.history)
     
     const LinearGradientAnimated = Animated.createAnimatedComponent(LinearGradient)
     const position = useRef(new Animated.ValueXY()).current
@@ -25,6 +24,7 @@ const HomeScreen = () => {
     
     const [modalVisible, setModalVisible] = useState(false)
     const [amountMoney, setAmountMoney] = useState('')
+    const [note, setNote] = useState('')
     const [isIn, setIsIn] = useState(false)
     const [currentTag, setCurrentTag] = useState([])
 
@@ -45,6 +45,7 @@ const HomeScreen = () => {
                 (g.dy > zone) ? setIsIn(true) : setIsIn(false)
                 //
                 setAmountMoney('')
+                setNote('')
                 setCurrentTag([])
                 setModalVisible(true)
                 //
@@ -129,15 +130,18 @@ const HomeScreen = () => {
             title={isIn ? 'In' : 'Out'}
             input={amountMoney}
             inputChange={setAmountMoney}
+            note={note}
+            noteChange={setNote}
             confirm={()=>{
                 if(isNaN(+amountMoney) === false){
-                    if(isIn) dispatch(fundChange(+amountMoney))
-                    else dispatch(fundChange(-+amountMoney))
+                    if(isIn) dispatch(moneyIn(+amountMoney))
+                    else dispatch(moneyOut(+amountMoney))
                     
                     dispatch(historySave({
                         type: isIn ? 'IN' : 'OUT',
                         amount: +amountMoney,
-                        tag: currentTag
+                        tag: currentTag,
+                        time: Date.now()
                     }))
                 } else {}
 
@@ -147,18 +151,22 @@ const HomeScreen = () => {
         >
             <FlatList
                 data={tags}
-                keyExtractor={data => data}
-                numColumns={3}
+                keyExtractor={(data,i) => String(data) + i}
+                contentContainerStyle={{marginHorizontal: 7}}
+                horizontal
                 renderItem={({item}) => {
                     return (
-                        <Chip
-                            onPress={() => {
-                                if(currentTag.includes(item)) setCurrentTag(currentTag.filter(val => val !== item))
-                                else setCurrentTag([...currentTag, item])
-                            }}
-                            title={item}
-                            type={currentTag.includes(item) ? 'solid' : 'outline'} 
-                        />
+                        <View style={{marginHorizontal: 2}}>
+                            <Chip
+                                onPress={() => {
+                                    if(currentTag.includes(item)) setCurrentTag(currentTag.filter(val => val !== item))
+                                    else setCurrentTag([...currentTag, item])
+                                }}
+                                title={item}
+                                type={currentTag.includes(item) ? 'solid' : 'outline'} 
+                                
+                            />
+                        </View>
                     )
                 }}
             />

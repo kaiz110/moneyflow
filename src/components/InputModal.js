@@ -1,8 +1,8 @@
 import React,{ useEffect, createRef } from 'react'
-import { View, StyleSheet, Modal, TouchableWithoutFeedback } from 'react-native'
+import { View, StyleSheet, Modal, TouchableWithoutFeedback, ScrollView } from 'react-native'
 import { Input, Button, Text } from 'react-native-elements'
 
-const InputModal = ({title, confirm ,input, inputChange, showModal, onClose , children}) => {
+const InputModal = ({title, confirm ,input, inputChange, note, noteChange, showModal, onClose , children}) => {
     const inputRef = createRef()
 
     useEffect(() => {
@@ -24,27 +24,39 @@ const InputModal = ({title, confirm ,input, inputChange, showModal, onClose , ch
 
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                 <View style={styles.container}>
-                    <Text h3 style={{margin: 10}}>{title}</Text>
-                    <Input
-                        ref={inputRef}
-                        value={input}
-                        onChangeText={inputChange}
-                        placeholder='Amount of money'
-                        keyboardType='number-pad'
-                    />
-                    {children}
-                    <View style={{flexDirection: 'row'}}>
-                        <Button
-                            containerStyle={styles.button}
-                            title='CANCEL'
-                            onPress={onClose}
+                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{alignItems: 'center'}}>
+                        <Text h3 style={{margin: 10}}>{title}</Text>
+                        <Input
+                            ref={inputRef}
+                            value={input}
+                            onChangeText={inputChange}
+                            label='Số tiền'
+                            keyboardType='number-pad'
                         />
-                        <Button
-                            containerStyle={styles.button}
-                            title='OK'
-                            onPress={confirm}
+                        <Input
+                            value={note}
+                            onChangeText={noteChange}
+
+                            multiline
+
+                            label='Ghi chú'
                         />
-                    </View>
+
+                        {children}
+
+                        <View style={{flexDirection: 'row'}}>
+                            <Button
+                                containerStyle={styles.button}
+                                title='CANCEL'
+                                onPress={onClose}
+                            />
+                            <Button
+                                containerStyle={styles.button}
+                                title='OK'
+                                onPress={confirm}
+                            />
+                        </View>
+                    </ScrollView>
                 </View>
             </View>
         </Modal>
@@ -61,12 +73,13 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.5)'
     },
     button: {
-        width: '25%',
+        width: '29%',
         margin: 20
     },
     container: {
         width: '90%',
-        alignItems: 'center',
+        marginVertical: 15,
+        borderRadius: 10,
         backgroundColor: 'white'
     }
 })

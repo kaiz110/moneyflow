@@ -1,15 +1,17 @@
 
-// history = [{tag: ...,type: ...,amount:...}]
+// history = [{tag: ...,type: ...,amount:...,time:...,note:...}]
 const initalState = {
-    fund: 0,
+    fund: {in: 0, out: 0},
     history: [],
     tags: ['Tiền ăn','Quần áo'],
 }
 
 const reducer = (state = initalState, action) => {
     switch(action.type){
-        case 'FUND_CHANGE':
-            return {...state, fund: state.fund + action.payload}
+        case 'MONEY_IN':
+            return {...state, fund: {...state.fund, in: state.fund.in + action.payload}}
+        case 'MONEY_OUT':
+            return {...state, fund: {...state.fund, out: state.fund.out + action.payload}}
         case 'HISTORY_SAVE':
             return {...state, history: [...state.history, action.payload]}
         default:
