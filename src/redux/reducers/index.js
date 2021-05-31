@@ -10,6 +10,10 @@ const reducer = (state = initalState, action) => {
     switch(action.type){
         case 'FUND_CHANGE':
             return {...state, fund: state.fund + action.payload}
+        case 'HISTORY_SAVE':
+            return {...state, history: [...state.history, action.payload]}
+        default:
+            return state
     }
 }
 

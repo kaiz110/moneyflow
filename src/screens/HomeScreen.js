@@ -1,10 +1,11 @@
 import React, { useRef, useState } from 'react'
 import { StyleSheet, View, Text, Button,
-     Animated, FlatList, PanResponder, Dimensions } from 'react-native'
+    Animated, FlatList, PanResponder, Dimensions, TouchableOpacity } from 'react-native'
+import { Chip } from 'react-native-elements'
 import { LinearGradient } from 'expo-linear-gradient'
 import firebase from 'firebase'
-import { useDispatch } from 'react-redux'
-import { fundChange } from '../redux/actions'
+import { useDispatch, useSelector } from 'react-redux'
+import { fundChange, historySave } from '../redux/actions'
 import InputModal from '../components/InputModal'
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
@@ -14,6 +15,8 @@ const zone = SCREEN_HEIGHT * 0.21
 
 const HomeScreen = () => {
     const dispatch = useDispatch()
+    const tags = useSelector(state => state.tags)
+    const history = useSelector(state => state.history)
     
     const LinearGradientAnimated = Animated.createAnimatedComponent(LinearGradient)
     const position = useRef(new Animated.ValueXY()).current
@@ -23,6 +26,7 @@ const HomeScreen = () => {
     const [modalVisible, setModalVisible] = useState(false)
     const [amountMoney, setAmountMoney] = useState('')
     const [isIn, setIsIn] = useState(false)
+    const [currentTag, setCurrentTag] = useState([])
 
     const pan = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
@@ -39,7 +43,11 @@ const HomeScreen = () => {
         onPanResponderRelease: (e,g) => {
             if(g.dy > zone || g.dy < -zone){
                 (g.dy > zone) ? setIsIn(true) : setIsIn(false)
+                //
+                setAmountMoney('')
+                setCurrentTag([])
                 setModalVisible(true)
+                //
                 Animated.sequence([
                     // end
                     Animated.timing(cardOpacity, {
@@ -122,18 +130,39 @@ const HomeScreen = () => {
             input={amountMoney}
             inputChange={setAmountMoney}
             confirm={()=>{
-                if(isNaN(+amountMoney)){
+                if(isNaN(+amountMoney) === false){
                     if(isIn) dispatch(fundChange(+amountMoney))
                     else dispatch(fundChange(-+amountMoney))
-                } else {
-
-                }
+                    
+                    dispatch(historySave({
+                        type: isIn ? 'IN' : 'OUT',
+                        amount: +amountMoney,
+                        tag: currentTag
+                    }))
+                } else {}
 
                 setModalVisible(false)
-                setAmountMoney('')
             }}
             onClose={() => setModalVisible(false)}
-        />
+        >
+            <FlatList
+                data={tags}
+                keyExtractor={data => data}
+                numColumns={3}
+                renderItem={({item}) => {
+                    return (
+                        <Chip
+                            onPress={() => {
+                                if(currentTag.includes(item)) setCurrentTag(currentTag.filter(val => val !== item))
+                                else setCurrentTag([...currentTag, item])
+                            }}
+                            title={item}
+                            type={currentTag.includes(item) ? 'solid' : 'outline'} 
+                        />
+                    )
+                }}
+            />
+        </InputModal>
     </View>
 }
 

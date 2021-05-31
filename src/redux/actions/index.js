@@ -6,3 +6,10 @@ export const fundChange = (amount) => {
         payload: amount
     }
 }
+
+export const historySave = (object) => {
+    return {
+        type: 'HISTORY_SAVE',
+        payload: object
+    }
+}

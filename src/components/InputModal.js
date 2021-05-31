@@ -2,7 +2,7 @@ import React,{ useEffect, createRef } from 'react'
 import { View, StyleSheet, Modal, TouchableWithoutFeedback } from 'react-native'
 import { Input, Button, Text } from 'react-native-elements'
 
-const InputModal = ({title, confirm ,input, inputChange, showModal, onClose}) => {
+const InputModal = ({title, confirm ,input, inputChange, showModal, onClose , children}) => {
     const inputRef = createRef()
 
     useEffect(() => {
@@ -32,6 +32,7 @@ const InputModal = ({title, confirm ,input, inputChange, showModal, onClose}) =>
                         placeholder='Amount of money'
                         keyboardType='number-pad'
                     />
+                    {children}
                     <View style={{flexDirection: 'row'}}>
                         <Button
                             containerStyle={styles.button}
