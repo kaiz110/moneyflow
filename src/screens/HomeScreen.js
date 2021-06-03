@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, Button,
     Animated, FlatList, PanResponder, Dimensions, TouchableOpacity } from 'react-native'
 import { Chip } from 'react-native-elements'
 import { LinearGradient } from 'expo-linear-gradient'
-import firebase from 'firebase'
+import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
 import { moneyIn, moneyOut, historySave } from '../redux/actions'
 import InputModal from '../components/InputModal'
@@ -141,7 +141,8 @@ const HomeScreen = () => {
                         type: isIn ? 'IN' : 'OUT',
                         amount: +amountMoney,
                         tag: currentTag,
-                        time: Date.now()
+                        note: note,
+                        time: moment().format()
                     }))
                 } else {}
 
@@ -149,27 +150,32 @@ const HomeScreen = () => {
             }}
             onClose={() => setModalVisible(false)}
         >
-            <FlatList
-                data={tags}
-                keyExtractor={(data,i) => String(data) + i}
-                contentContainerStyle={{marginHorizontal: 7}}
-                horizontal
-                renderItem={({item}) => {
-                    return (
-                        <View style={{marginHorizontal: 2}}>
-                            <Chip
-                                onPress={() => {
-                                    if(currentTag.includes(item)) setCurrentTag(currentTag.filter(val => val !== item))
-                                    else setCurrentTag([...currentTag, item])
-                                }}
-                                title={item}
-                                type={currentTag.includes(item) ? 'solid' : 'outline'} 
-                                
-                            />
-                        </View>
-                    )
-                }}
-            />
+            {!isIn
+            ? (
+                <FlatList
+                    data={tags}
+                    keyExtractor={(data,i) => String(data) + i}
+                    contentContainerStyle={{marginHorizontal: 7}}
+                    horizontal
+                    renderItem={({item}) => {
+                        return (
+                            <View style={{marginHorizontal: 2}}>
+                                <Chip
+                                    onPress={() => {
+                                        if(currentTag.includes(item)) setCurrentTag(currentTag.filter(val => val !== item))
+                                        else setCurrentTag([...currentTag, item])
+                                    }}
+                                    title={item}
+                                    type={currentTag.includes(item) ? 'solid' : 'outline'} 
+                                    
+                                />
+                            </View>
+                        )
+                    }}
+                />
+            )
+            : null  
+            }
         </InputModal>
     </View>
 }

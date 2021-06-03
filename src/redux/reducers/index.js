@@ -2,7 +2,29 @@
 // history = [{tag: ...,type: ...,amount:...,time:...,note:...}]
 const initalState = {
     fund: {in: 0, out: 0},
-    history: [],
+    history: [
+        {
+            type: 'OUT',
+            amount: 10,
+            note: '',
+            time: '2021-05-31T19:12:13+07:00',
+            tag: []
+        },
+        {
+            type: 'OUT',
+            amount: 10,
+            note: '',
+            time: '2021-05-31T19:12:13+07:00',
+            tag: []
+        },
+        {
+            type: 'OUT',
+            amount: 10,
+            note: '',
+            time: '2021-06-01T19:12:13+07:00',
+            tag: []
+        },
+    ],
     tags: ['Tiền ăn','Quần áo'],
 }
 
