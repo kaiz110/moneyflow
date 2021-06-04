@@ -11,7 +11,7 @@ const SignUpScreen = ({navigation}) => {
         firebase.auth().createUserWithEmailAndPassword(email,password)
     }
 
-    return <View>
+    return <View style={styles.container}>
         <Input
             label='Your Email'
             placeholder='email@xxx.com'
@@ -34,6 +34,13 @@ const SignUpScreen = ({navigation}) => {
     </View>
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        bottom: 75,
+    }
+})
 
 export default SignUpScreen

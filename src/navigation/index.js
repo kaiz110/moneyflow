@@ -16,7 +16,7 @@ const Tab = createBottomTabNavigator()
 const Login = () => {
     return <Stack.Navigator>
         <Stack.Screen name='SignInScreen' component={SignInScreen} options={{headerShown: false}}/>
-        <Stack.Screen name='SignUpScreen' component={SignUpScreen} options={{headerShown: false}}/>
+        <Stack.Screen name='SignUpScreen' component={SignUpScreen} options={{title: 'Register'}}/>
     </Stack.Navigator>
 }
 
@@ -32,13 +32,14 @@ export default () => {
 
     useEffect(() => {
         const firebaseConfig = {
-            apiKey: "AIzaSyDWdfr3yOQKQr9w2cih-5_OXtXQreDyRnA",
-            authDomain: "moneyflow-86c5b.firebaseapp.com",
-            projectId: "moneyflow-86c5b",
-            storageBucket: "moneyflow-86c5b.appspot.com",
-            messagingSenderId: "771830985719",
-            appId: "1:771830985719:web:1eefcee19f497d6804f4f2",
-            measurementId: "G-W65STF739V"
+            apiKey: "AIzaSyAAxh0Yf0I-IYUb7g-wCYN32YOoTAB9aLQ",
+            authDomain: "auth-81e99.firebaseapp.com",
+            databaseURL: "https://auth-81e99.firebaseio.com",
+            projectId: "auth-81e99",
+            storageBucket: "auth-81e99.appspot.com",
+            messagingSenderId: "994298999545",
+            appId: "1:994298999545:web:c1e7bd5f56e96ad404a828",
+            measurementId: "G-8ERPN4CSN1"
         }
       
         firebase.initializeApp(firebaseConfig)
