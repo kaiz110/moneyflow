@@ -4,10 +4,10 @@ const initalState = {
     fund: {in: 0, out: 0},
     history: [
         {
-            type: 'OUT',
+            type: 'IN',
             amount: 10,
             note: '',
-            time: '2021-05-31T19:12:13+07:00',
+            time: '2021-05-07T19:12:13+07:00',
             tag: []
         },
         {

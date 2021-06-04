@@ -136,7 +136,7 @@ const HomeScreen = () => {
                 if(isNaN(+amountMoney) === false){
                     if(isIn) dispatch(moneyIn(+amountMoney))
                     else dispatch(moneyOut(+amountMoney))
-                    
+
                     dispatch(historySave({
                         type: isIn ? 'IN' : 'OUT',
                         amount: +amountMoney,
