@@ -3,13 +3,12 @@ import { StyleSheet, View, Text, Button,
     Animated, FlatList, PanResponder, Dimensions, TouchableOpacity } from 'react-native'
 import { Chip } from 'react-native-elements'
 import { LinearGradient } from 'expo-linear-gradient'
-import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
 import { moneyIn, moneyOut, historySave } from '../redux/actions'
+import moment from 'moment'
 import InputModal from '../components/InputModal'
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
-const SCREEN_WIGHT = Dimensions.get('window').width
 
 const zone = SCREEN_HEIGHT * 0.21
 
@@ -108,6 +107,23 @@ const HomeScreen = () => {
         }]
     }
 
+    const modalConfirm = () => {
+        if(isNaN(+amountMoney) === false){
+            if(isIn) dispatch(moneyIn(+amountMoney))
+            else dispatch(moneyOut(+amountMoney))
+
+            dispatch(historySave({
+                type: isIn ? 'IN' : 'OUT',
+                amount: +amountMoney,
+                tag: currentTag,
+                note: note,
+                time: moment().format()
+            }))
+        } else {}
+
+        setModalVisible(false)
+    }
+
     return <View style={styles.container}>  
         <LinearGradientAnimated
             colors={['red','transparent']}
@@ -117,6 +133,7 @@ const HomeScreen = () => {
             colors={['transparent','green']}
             style={zoneColor(SCREEN_HEIGHT/2)}
         />
+        
         <Text style={[styles.text, {top: 10}]}>OUT</Text>
         <Animated.View 
             style={[position.getLayout(),styles.card,
@@ -132,22 +149,7 @@ const HomeScreen = () => {
             inputChange={setAmountMoney}
             note={note}
             noteChange={setNote}
-            confirm={()=>{
-                if(isNaN(+amountMoney) === false){
-                    if(isIn) dispatch(moneyIn(+amountMoney))
-                    else dispatch(moneyOut(+amountMoney))
-
-                    dispatch(historySave({
-                        type: isIn ? 'IN' : 'OUT',
-                        amount: +amountMoney,
-                        tag: currentTag,
-                        note: note,
-                        time: moment().format()
-                    }))
-                } else {}
-
-                setModalVisible(false)
-            }}
+            confirm={modalConfirm}
             onClose={() => setModalVisible(false)}
         >
             {!isIn

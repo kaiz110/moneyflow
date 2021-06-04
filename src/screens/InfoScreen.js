@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView, View, StyleSheet, Dimensions,
-  ScrollView, FlatList, TouchableOpacity, Platform
+  FlatList, TouchableOpacity, Platform
 } from 'react-native';
 import { Divider, Text, Chip } from 'react-native-elements'
 import { LineChart } from 'react-native-chart-kit';
 import { useSelector } from 'react-redux'
-import moment from 'moment'
 import { AntDesign } from '@expo/vector-icons'
+import moment from 'moment'
 import DateTimePicker from '@react-native-community/datetimepicker'
 
 const DAY_FORMAT = 'YYYY-MM-DD'
+
+
 
 const MyBezierLineChart = ({data}) => {
   return (
@@ -34,7 +36,6 @@ const MyBezierLineChart = ({data}) => {
         }}
         bezier
         style={{
-          marginVertical: 8,
           borderRadius: 16,
         }}
       />
@@ -52,7 +53,7 @@ function getChartData(data, type, from ,to) {
     const limit = dateNumber > 30 ? 30 : dateNumber
 
     for(let i = 0 ; i <= limit; i++) {
-        const tempDay = end.clone().subtract(i,'days') // ex 22/22/2222
+        const tempDay = end.clone().subtract(i,'days') 
         const classify = data.filter(val => {
             return moment(val.time).format(DAY_FORMAT) == tempDay.format(DAY_FORMAT) && val.type == type
         }) // day array
@@ -86,54 +87,60 @@ function getSum(data, type) {
     return sum
 }
 
+
+
+
 // MAIN
 const InfoScreen = () => {
     const history = useSelector(state => state.history)
-    const [ arrayLastWeek, setArrayLastWeek ] = useState([])
-    const [ dateRange, setDateRange ] = useState([]) // from - to array
+    const [ arrayChartData, setArrayChartData ] = useState([])
+    const [ dateRange, setDateRange ] = useState([]) 
     const [ dateFrom, setDateFrom ] = useState(new Date())
+    const [ dateTo, setDateTo ] = useState(new Date())
     const [ showDateFrom, setShowDateFrom ] = useState(false)
     const [ showDateTo, setShowDateTo ] = useState(false)
-    const [ dateTo, setDateTo ] = useState(new Date())
     const [ isOut, setIsOut ] = useState(false)
 
     useEffect(() => {
         if(history[0]) {
-            const daySumArray = getChartData(history,isOut?'OUT':'IN', dateFrom, dateTo)
-            setArrayLastWeek(daySumArray.reverse())
+            const daySumArray = getChartData( history, isOut?'OUT':'IN' , dateFrom , dateTo )
+            setArrayChartData(daySumArray.reverse())
         }
 
-        const data = getArrayDateRange(history, dateFrom, dateTo)
+        const data = getArrayDateRange( history , dateFrom , dateTo )
         setDateRange( data )
-    },[history, dateFrom, dateTo, isOut])
+    },[ history, dateFrom, dateTo, isOut])
 
     const renderCard = ({item}) => {
         return <View style={styles.cardContainer}>
-            <View style={{flexDirection: 'row', alignItems: 'center',justifyContent: 'space-between',margin: 5}}>
+            <View style={styles.cardHeader}>
                 {item.type === 'OUT' 
-                ? <AntDesign name='caretup' size={17} style={{color: 'red', marginHorizontal: 5}}/>
-                : <AntDesign name='caretdown' size={17} style={{color: 'green', marginHorizontal: 5}}/>
+                ? <AntDesign name='caretup' size={17} style={{color: 'red',...styles.mH}}/>
+                : <AntDesign name='caretdown' size={17} style={{color: 'green',...styles.mH}}/>
                 }
 
-                <Text h4 style={{marginHorizontal: 5}}>{item.amount}</Text>
-                <Text style={{marginLeft: 25, marginRight: 5}}>{moment(item.time).format('DD/MM/YYYY HH:mm')}</Text>
+                <Text h4 style={styles.mH}>{item.amount}</Text>
+
+                <Text style={{marginLeft: 25, marginRight: 5}}>
+                    {moment(item.time).format('DD/MM/YYYY HH:mm')}
+                </Text>
             </View>
 
             {item.note !== '' &&
                 <View style={styles.cardTag}>
-                    <Text style={{marginHorizontal: 5}}>Note:</Text>
+                    <Text style={styles.mH}>Note:</Text>
                     <Text style={{margin: 5}}>{item.note}</Text>
                 </View>
             }
 
             {item.tag.length != false &&
                 <View style={styles.cardTag}>
-                    <Text style={{marginHorizontal: 5}}>Tag:</Text>
+                    <Text style={styles.mH}>Tag:</Text>
                     <FlatList
                         data={item.tag}
                         horizontal
                         keyExtractor={(data,i) => data+i}
-                        contentContainerStyle={{marginHorizontal: 5}}
+                        contentContainerStyle={styles.mH}
                         renderItem={({item}) => {
                             return <Chip title={item} type='solid'/>
                         }}
@@ -146,7 +153,7 @@ const InfoScreen = () => {
 
     const componentHeader = () => {
         const lm = moment(dateTo).diff(moment(dateFrom), 'days') > 30
-        const disF = 'DD-MM-YYYY'
+        const disF = 'DD/MM/YYYY'
         return <View style={styles.container}>
             <Text>Biểu đồ hoạt động (tối đa 30 ngày)</Text>
             <MyBezierLineChart 
@@ -157,42 +164,42 @@ const InfoScreen = () => {
                         moment(dateTo).format(disF)],
                     datasets: [
                     {
-                        data: arrayLastWeek.length ? arrayLastWeek : [0,0,0,0,0,0,0],
+                        data: arrayChartData.length ? arrayChartData : [0,0,0,0,0,0,0],
                     },
                     ],
                 }}
             />
 
-            <Divider style={{backgroundColor: 'lightgray', height: 1, width: '90%'}}/>
+            <Divider style={styles.divider}/>
 
             {/*switch type button */}
             <TouchableOpacity 
             onPress={() => setIsOut(!isOut)}
-            style={{flexDirection: 'row',padding: 2,borderWidth:1,alignSelf: 'flex-end'}}>
+            style={styles.switchButton}>
                 <AntDesign name='caretup' size={22} color={isOut ? 'red' : 'gray'}/>
                 <AntDesign name='caretdown' size={22} color={isOut ? 'gray' : 'green'}/>
             </TouchableOpacity>
 
-            <Text style={{fontSize: 20}}>Tổng tiền đã {isOut ? 'chi' : 'thu'}</Text>
-            <View style={{flexDirection: 'row', justifyContent: 'space-evenly',width: '100%'}}>
-                <Text style={{fontSize: 50, color: isOut?'red':'green', marginVertical: 10}}>{getSum(dateRange, isOut?'OUT':'IN')}</Text>
+            <Text style={{fontSize: 20}}>Số tiền đã {isOut ? 'chi' : 'thu'}</Text>
+            <View style={styles.textSumContainer}>
+                <Text style={[styles.textSum, {color: isOut?'red':'green'}]}>{getSum(dateRange, isOut?'OUT':'IN')}</Text>
             </View>
 
-            <View style={{flexDirection: 'row', justifyContent: 'space-around',width: '100%'}}>
-                <View style={{flexDirection: 'row',alignItems: 'center'}}>
-                    <Text style={{marginHorizontal: 5}}>From</Text>
+            <View style={styles.datepickerContainer}>
+                <View style={styles.datepicker}>
+                    <Text style={styles.mH}>Từ</Text>
 
-                    <TouchableOpacity onPress={() => setShowDateFrom(true)} style={{borderWidth: 1,padding: 5}}>
-                        <Text>{moment(dateFrom).format('DD/MM/YYYY')}</Text>
+                    <TouchableOpacity onPress={() => setShowDateFrom(true)} style={styles.dp}>
+                        <Text>{moment(dateFrom).format(disF)}</Text>
                     </TouchableOpacity>
                 </View>
 
 
-                <View style={{flexDirection: 'row',alignItems: 'center'}}>
-                    <Text style={{marginHorizontal: 5}}>To</Text>
+                <View style={styles.datepicker}>
+                    <Text style={styles.mH}>Đến</Text>
 
-                    <TouchableOpacity onPress={() => setShowDateTo(true)} style={{borderWidth: 1,padding: 5}}>
-                        <Text>{moment(dateTo).format('DD/MM/YYYY')}</Text>
+                    <TouchableOpacity onPress={() => setShowDateTo(true)} style={styles.dp}>
+                        <Text>{moment(dateTo).format(disF)}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -254,6 +261,12 @@ const styles = StyleSheet.create({
       margin: 5,
       marginHorizontal: 15
   },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    margin: 5
+  },
   cardTag: {
     flexDirection: 'row', 
     borderWidth: 1, 
@@ -262,6 +275,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding:5,
     marginVertical: 2
+  },
+  datepickerContainer: {
+    flexDirection: 'row', 
+    justifyContent: 'space-around',
+    width: '100%'
+  },
+  datepicker: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },    
+  dp: {
+    borderWidth: 1,
+    padding: 5
+  },
+  divider: {
+    height: 1, 
+    width: '90%',
+    marginVertical: 5 ,
+    backgroundColor: 'lightgray'
+  },
+  mH: {
+    marginHorizontal: 5
+  },
+  switchButton: {
+    flexDirection: 'row',
+    padding: 2,
+    borderWidth:1,
+    alignSelf: 'flex-end'
+  },
+  textSumContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '100%'
+  },
+  textSum: {
+    fontSize: 50, 
+    marginVertical: 10
   }
 });
 
