@@ -6,13 +6,14 @@ import {
 import { Divider, Text, Chip } from 'react-native-elements'
 import { LineChart } from 'react-native-chart-kit';
 import { useSelector } from 'react-redux'
+import { LinearGradient } from 'expo-linear-gradient'
 import { AntDesign } from '@expo/vector-icons'
 import moment from 'moment'
 import DateTimePicker from '@react-native-community/datetimepicker'
 
 const DAY_FORMAT = 'YYYY-MM-DD'
 
-
+const SCREEN_HEIGHT = Dimensions.get('window').height
 
 const MyBezierLineChart = ({data}) => {
   return (
@@ -22,9 +23,9 @@ const MyBezierLineChart = ({data}) => {
         width={Dimensions.get('window').width} // from react-native
         height={250}
         chartConfig={{
-          backgroundColor: '#1cc910',
-          backgroundGradientFrom: '#eff3ff',
-          backgroundGradientTo: '#efefef',
+          backgroundColor: '#444',
+          backgroundGradientFrom: '#e0e8ff',
+          backgroundGradientTo: '#eff3ff',
           decimalPlaces: 0, // optional, defaults to 2dp
           color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
           style: {
@@ -32,11 +33,17 @@ const MyBezierLineChart = ({data}) => {
           },
           propsForVerticalLabels: {
               translateX: 25,
+          },
+          propsForDots: {
+            r: "5",
+            strokeWidth: "1",
+            stroke: "#fff"
           }
         }}
         bezier
         style={{
           borderRadius: 16,
+          margin : 5
         }}
       />
     </>
@@ -165,7 +172,6 @@ const InfoScreen = ({navigation}) => {
         const lm = moment(dateTo).diff(moment(dateFrom), 'days') > 30
         const disF = 'DD/MM/YYYY'
         return <View style={styles.container}>
-            <Text>Biểu đồ hoạt động (tối đa 30 ngày)</Text>
             <MyBezierLineChart 
                 data={{
                     labels: [
@@ -244,6 +250,11 @@ const InfoScreen = ({navigation}) => {
 
     return (
         <SafeAreaView style={{flex: 1}}>
+            <LinearGradient
+                colors={['#b86ee0','#41bccc']}
+                style={styles.background}
+            />
+
             <View>
                 <FlatList
                     ListFooterComponent={componentHeader}
@@ -258,71 +269,83 @@ const InfoScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    padding: 10,
-  },
-  cardContainer: {
-      borderWidth: 1,
-      borderRadius: 3,
-      borderColor: 'grey',
-      padding: 5,
-      margin: 5,
-      marginHorizontal: 15
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    margin: 5
-  },
-  cardTag: {
-    flexDirection: 'row', 
-    borderWidth: 1, 
-    borderColor: 'lightgrey',
-    borderRadius: 25,
-    alignItems: 'center',
-    padding:5,
-    marginVertical: 2
-  },
-  datepickerContainer: {
-    flexDirection: 'row', 
-    justifyContent: 'space-around',
-    width: '100%'
-  },
-  datepicker: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },    
-  dp: {
-    borderWidth: 1,
-    padding: 5
-  },
-  divider: {
-    height: 1, 
-    width: '90%',
-    marginVertical: 5 ,
-    backgroundColor: 'lightgray'
-  },
-  mH: {
-    marginHorizontal: 5
-  },
-  switchButton: {
-    flexDirection: 'row',
-    padding: 2,
-    borderWidth:1,
-    alignSelf: 'flex-end'
-  },
-  textSumContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: '100%'
-  },
-  textSum: {
-    fontSize: 50, 
-    marginVertical: 10
-  }
+    background: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        opacity: 0.8,
+        height: SCREEN_HEIGHT
+    },
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        padding: 10,
+    },
+    cardContainer: {
+        borderWidth: 1,
+        borderRadius: 3,
+        borderColor: 'white',
+        padding: 5,
+        margin: 5,
+        marginHorizontal: 15
+    },
+    cardHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        margin: 5
+    },
+    cardTag: {
+        flexDirection: 'row', 
+        borderWidth: 1, 
+        borderColor: 'lightgrey',
+        borderRadius: 25,
+        alignItems: 'center',
+        padding:5,
+        marginVertical: 2
+    },
+    datepickerContainer: {
+        flexDirection: 'row', 
+        justifyContent: 'space-around',
+        width: '100%'
+    },
+    datepicker: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },    
+    dp: {
+        borderWidth: 1,
+        borderColor: 'grey',
+        borderRadius: 7,
+        padding: 5,
+        backgroundColor: 'white'
+    },
+    divider: {
+        height: 1, 
+        width: '90%',
+        marginVertical: 5 ,
+        backgroundColor: 'lightgray'
+    },
+    mH: {
+        marginHorizontal: 5
+    },
+    switchButton: {
+        flexDirection: 'row',
+        padding: 2,
+        borderBottomWidth: 1,
+        backgroundColor: 'orange',
+        alignSelf: 'flex-end'
+    },
+    textSumContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        width: '100%'
+    },
+    textSum: {
+        fontSize: 50, 
+        marginVertical: 10
+    }
 });
 
 export default InfoScreen;

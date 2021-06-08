@@ -10,7 +10,7 @@ import InputModal from '../components/InputModal'
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
 
-const zone = SCREEN_HEIGHT * 0.21
+const zone = SCREEN_HEIGHT * 0.1
 
 const HomeScreen = () => {
     const dispatch = useDispatch()
@@ -196,17 +196,18 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     card: {
-        width: 100,
-        height: 100, 
-        marginLeft: 10,
+        width: 240,
+        height: 160, 
         zIndex: 0,
-        backgroundColor: 'yellow'
+        borderRadius: 5,
+        backgroundColor: 'dodgerblue'
     },
     text: {
         position: 'absolute',
         zIndex: -1,
         margin: 10,
-        fontSize: 27
+        fontSize: 27,
+        opacity: 0.2
     }
 })
 
