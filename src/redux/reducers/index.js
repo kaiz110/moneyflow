@@ -34,6 +34,16 @@ const reducer = (state = initalState, action) => {
             return {...state, fund: {...state.fund, in: state.fund.in + action.payload}}
         case 'MONEY_OUT':
             return {...state, fund: {...state.fund, out: state.fund.out + action.payload}}
+        case 'ADD_TAG':
+            return {...state, tags: [...state.tags, action.payload]}
+        case 'EDIT_TAG':
+            return {...state, tags: state.tags.map(val => {
+                if(val === action.payload.oldname){
+                    return action.payload.name
+                } else {
+                    return val
+                }
+            })}
         case 'HISTORY_SAVE':
             return {...state, history: [...state.history, action.payload]}
         default:

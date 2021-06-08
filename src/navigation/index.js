@@ -6,6 +6,7 @@ import HomeScreen from '../screens/HomeScreen'
 import InfoScreen from '../screens/InfoScreen'
 import SignInScreen from '../screens/SignInScreen'
 import SignUpScreen from '../screens/SignUpScreen'
+import SettingScreen from '../screens/SettingScreen'
 import firebase from 'firebase'
 import 'firebase/auth'
 import 'firebase/database'
@@ -21,6 +22,13 @@ const Login = () => {
 }
 
 const Home = () => {
+    return <Stack.Navigator>
+        <Stack.Screen name='Main' component={Main} options={{headerShown: false}}/>
+        <Stack.Screen name='SettingScreen' component={SettingScreen}/>
+    </Stack.Navigator>
+}
+//
+const Main = () => {
     return <Tab.Navigator>
         <Tab.Screen name='HomeScreen' component={HomeScreen}/>
         <Tab.Screen name='InfoScreen' component={InfoScreen}/>

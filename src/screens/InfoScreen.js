@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import {
   SafeAreaView, View, StyleSheet, Dimensions,
   FlatList, TouchableOpacity, Platform
@@ -91,7 +91,7 @@ function getSum(data, type) {
 
 
 // MAIN
-const InfoScreen = () => {
+const InfoScreen = ({navigation}) => {
     const history = useSelector(state => state.history)
     const [ arrayChartData, setArrayChartData ] = useState([])
     const [ dateRange, setDateRange ] = useState([]) 
@@ -100,6 +100,16 @@ const InfoScreen = () => {
     const [ showDateFrom, setShowDateFrom ] = useState(false)
     const [ showDateTo, setShowDateTo ] = useState(false)
     const [ isOut, setIsOut ] = useState(false)
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity style={{padding: 10}} onPress={() => navigation.navigate('SettingScreen')}>
+                    <AntDesign name='setting' size={25}/>
+                </TouchableOpacity>
+            )
+        })
+    },[navigation])
 
     useEffect(() => {
         if(history[0]) {

@@ -14,6 +14,20 @@ export const moneyOut = (amount) => {
     }
 }
 
+export const addTag = (name) => {
+    return {
+        type: 'ADD_TAG',
+        payload: name
+    }
+}
+
+export const editTag = (name,oldname) => {
+    return {
+        type: 'EDIT_TAG',
+        payload: {name,oldname}
+    }
+}
+
 export const historySave = (object) => {
     return {
         type: 'HISTORY_SAVE',
