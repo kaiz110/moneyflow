@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native'
 import { Button, Text, Chip } from 'react-native-elements'
 import { useSelector, useDispatch } from 'react-redux'
-import { addTag, editTag } from '../redux/actions'
+import { addTag, editTag, delTag } from '../redux/actions'
 import InputModal from '../components/InputModal'
 import firebase from 'firebase'
 import AntDesign from '@expo/vector-icons/AntDesign'
@@ -16,15 +16,13 @@ const SettingScreen = () => {
     const [ tag, setTag ] = useState('')
     const [ showAdd, setShowAdd ] = useState('')
     const [ showEdit, setShowEdit ] = useState('')
-    const [ currentTag, setCurrentTag ] = useState('')
+    const [ currentTag, setCurrentTag ] = useState('') //
 
-    const onConfirm = (addOrEdit,old) => {
-        if(addOrEdit == 'edit') {
-            dispatch(editTag(tag,old))
-        }
+    const onConfirm = (addOrEdit) => {
+        if(addOrEdit == 'edit') dispatch(editTag(tag, currentTag))
+        else dispatch(addTag(tag))
 
-        setShowEdit(false)
-        setShowAdd(false)
+        onClose()
     }
 
     const onClose = () => {
@@ -62,13 +60,13 @@ const SettingScreen = () => {
                 return (
                 <TouchableOpacity style={styles.cardTag} 
                     onPress={() => { 
-                        setShowEdit(true) 
+                        setTag(item)
                         setCurrentTag(item) 
-                        setTag(currentTag)
+                        setShowEdit(true) 
                     }}
                 >
                     <Text style={{fontSize: 16,marginLeft: 25}}>{item}</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => dispatch(delTag(item))}>
                         <AntDesign name='delete' size={25}/>
                     </TouchableOpacity>
                 </TouchableOpacity>
@@ -88,7 +86,7 @@ const SettingScreen = () => {
             note={tag}
             noteChange={setTag}
             secondLabel=''
-            confirm={onConfirm('add')}
+            confirm={() => onConfirm('add')}
             onClose={onClose}
         />
 
@@ -98,7 +96,7 @@ const SettingScreen = () => {
             note={tag}
             noteChange={setTag}
             secondLabel=''
-            confirm={onConfirm('edit',currentTag)}
+            confirm={() => onConfirm('edit')}
             onClose={onClose}
         />
     </View>

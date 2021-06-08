@@ -44,6 +44,8 @@ const reducer = (state = initalState, action) => {
                     return val
                 }
             })}
+        case 'DEL_TAG':
+            return {...state, tags: state.tags.filter(val => val !== action.payload)}
         case 'HISTORY_SAVE':
             return {...state, history: [...state.history, action.payload]}
         default:

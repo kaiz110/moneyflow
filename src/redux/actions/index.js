@@ -28,6 +28,13 @@ export const editTag = (name,oldname) => {
     }
 }
 
+export const delTag = (name) => {
+    return {
+        type: 'DEL_TAG',
+        payload: name
+    }
+}
+
 export const historySave = (object) => {
     return {
         type: 'HISTORY_SAVE',

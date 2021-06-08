@@ -24,7 +24,11 @@ const InputModal = ({title, confirm ,input, inputChange, note, noteChange, showM
 
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                 <View style={styles.container}>
-                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{alignItems: 'center'}}>
+                    <ScrollView 
+                        showsVerticalScrollIndicator={false} 
+                        contentContainerStyle={{alignItems: 'center'}}
+                        keyboardShouldPersistTaps='always'
+                    >
                         <Text h3 style={{margin: 10}}>{title}</Text>
                         {input != undefined &&
                         <Input
