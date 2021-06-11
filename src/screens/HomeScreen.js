@@ -1,20 +1,27 @@
-import React, { useRef, useState } from 'react'
+import React, { useLayoutEffect, useRef, useState } from 'react'
 import { StyleSheet, View, Text, Button,
     Animated, FlatList, PanResponder, Dimensions, TouchableOpacity } from 'react-native'
 import { Chip } from 'react-native-elements'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useDispatch, useSelector } from 'react-redux'
-import { moneyIn, moneyOut, historySave } from '../redux/actions'
+import { moneyIn, moneyOut, historySave, rehydrateState } from '../redux/actions'
 import moment from 'moment'
+import firebase from 'firebase'
 import InputModal from '../components/InputModal'
+
+import { upload, getValue } from '../firebase'
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(['Setting a timer']);
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
 
-const zone = SCREEN_HEIGHT * 0.1
+const zone = SCREEN_HEIGHT * 0.20
 
 const HomeScreen = () => {
     const dispatch = useDispatch()
     const tags = useSelector(state => state.tags)
+    const history = useSelector(state => state.history)
     
     const LinearGradientAnimated = Animated.createAnimatedComponent(LinearGradient)
     const position = useRef(new Animated.ValueXY()).current
@@ -27,6 +34,16 @@ const HomeScreen = () => {
     const [isIn, setIsIn] = useState(false)
     const [currentTag, setCurrentTag] = useState([])
 
+    const firstUpdate = useRef(true)
+
+    useLayoutEffect(() => {
+        if(firstUpdate.current) {
+            firstUpdate.current = false
+            return
+        } 
+        upload('history', history)
+    },[history])
+    
     const pan = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onPanResponderGrant: () => {
@@ -50,11 +67,18 @@ const HomeScreen = () => {
                 //
                 Animated.sequence([
                     // end
-                    Animated.timing(cardOpacity, {
-                        toValue: 0,
-                        duration: 500,
-                        useNativeDriver: false
-                    }),
+                    Animated.parallel([
+                        Animated.timing(position, {
+                            toValue: {x: 0, y: g.dy>zone ? SCREEN_HEIGHT : -SCREEN_HEIGHT},
+                            duration: 500,
+                            useNativeDriver: false
+                        }),
+                        Animated.timing(cardOpacity, {
+                            toValue: 0,
+                            duration: 500,
+                            useNativeDriver: false
+                        })
+                    ]),
                     // ->
                     Animated.timing(scale, {
                         toValue: 0,
@@ -102,16 +126,11 @@ const HomeScreen = () => {
             outputRange: height > 0 ? [0,1] : [1,0]
         })
 
-        return [styles.background, {
-            opacity
-        }]
+        return [styles.background, { opacity }]
     }
 
     const modalConfirm = () => {
         if(isNaN(+amountMoney) === false){
-            if(isIn) dispatch(moneyIn(+amountMoney))
-            else dispatch(moneyOut(+amountMoney))
-
             dispatch(historySave({
                 type: isIn ? 'IN' : 'OUT',
                 amount: +amountMoney,
@@ -127,11 +146,11 @@ const HomeScreen = () => {
     return <View style={styles.container}>  
         <LinearGradientAnimated
             colors={['red','transparent']}
-            style={zoneColor(-SCREEN_HEIGHT/2)}
+            style={zoneColor(-SCREEN_HEIGHT/4)}
         />
         <LinearGradientAnimated
             colors={['transparent','green']}
-            style={zoneColor(SCREEN_HEIGHT/2)}
+            style={zoneColor(SCREEN_HEIGHT/4)}
         />
         
         <Text style={[styles.text, {top: 10}]}>OUT</Text>

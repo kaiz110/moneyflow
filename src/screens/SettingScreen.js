@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native'
 import { Button, Text, Chip } from 'react-native-elements'
 import { useSelector, useDispatch } from 'react-redux'
@@ -6,17 +6,25 @@ import { addTag, editTag, delTag } from '../redux/actions'
 import InputModal from '../components/InputModal'
 import firebase from 'firebase'
 import AntDesign from '@expo/vector-icons/AntDesign'
+import { upload, getValue } from '../firebase'
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(['Setting a timer']);
 
 
 const SettingScreen = () => {
     const dispatch = useDispatch()
-    const fund = useSelector(state => state.fund)
     const tags = useSelector(state => state.tags)
+    const history = useSelector(state => state.history)
 
     const [ tag, setTag ] = useState('')
     const [ showAdd, setShowAdd ] = useState('')
     const [ showEdit, setShowEdit ] = useState('')
     const [ currentTag, setCurrentTag ] = useState('') //
+
+    useEffect(() => {
+        upload('tags',tags)
+    },[tags])
 
     const onConfirm = (addOrEdit) => {
         if(addOrEdit == 'edit') dispatch(editTag(tag, currentTag))
@@ -32,15 +40,23 @@ const SettingScreen = () => {
         setCurrentTag('')
     }
 
+    const getSum = (data, type) => {
+        let sum = 0
+        for(let i = 0 ; i < data.length ; i++){
+            if(data[i].type === type) sum += data[i].amount
+        }
+        return sum
+    }
+
     return <View>
         <View style={{flexDirection: 'row'}}>
             <Text style={styles.title}>Tổng tiền đã tiêu :</Text>
-            <Text style={styles.title}>{fund.out}</Text>
+            <Text style={styles.title}>{getSum(history, 'OUT')}</Text>
         </View>
         
         <View style={{flexDirection: 'row'}}>
             <Text style={styles.title}>Tổng tiền đã nhận :</Text>
-            <Text style={styles.title}>{fund.in}</Text>
+            <Text style={styles.title}>{getSum(history, 'IN')}</Text>
         </View>
 
         <Text style={styles.title}>Tag Edit</Text>

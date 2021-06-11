@@ -129,6 +129,8 @@ const InfoScreen = ({navigation}) => {
     },[ history, dateFrom, dateTo, isOut])
 
     const renderCard = ({item}) => {
+        const tag = item.tag?.length || false
+
         return <View style={styles.cardContainer}>
             <View style={styles.cardHeader}>
                 {item.type === 'OUT' 
@@ -150,7 +152,7 @@ const InfoScreen = ({navigation}) => {
                 </View>
             }
 
-            {item.tag.length != false &&
+            {tag != false &&
                 <View style={styles.cardTag}>
                     <Text style={styles.mH}>Tag:</Text>
                     <FlatList
