@@ -216,7 +216,6 @@ const InfoScreen = ({navigation}) => {
                         <Text style={[styles.textSum, {color: isOut?'red':'green'}]}>{value}</Text>
                     )}
                 />
-                
             </View>
 
             <View style={styles.datepickerContainer}>

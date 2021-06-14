@@ -153,7 +153,9 @@ const HomeScreen = () => {
             style={zoneColor(SCREEN_HEIGHT/4)}
         />
         
+
         <Text style={[styles.text, {top: 10}]}>RA</Text>
+
         <Animated.View 
             style={[position.getLayout(),styles.card,
                 { transform : [{scale}] , opacity: cardOpacity }]}

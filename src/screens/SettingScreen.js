@@ -23,6 +23,7 @@ const SettingScreen = () => {
     const [ currentTag, setCurrentTag ] = useState('')
     const [ modalDel, setModalDel ] = useState(false)
 
+
     useEffect(() => {
         upload('tags',tags)
     },[tags])
