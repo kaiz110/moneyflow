@@ -26,6 +26,7 @@ const SignInScreen = ({navigation}) => {
             label='Password'
             placeholder='password'
             leftIcon={{ type: 'material-icons', name: 'lock' }}
+            secureTextEntry
             value={password}
             onChangeText={setPassword}
         />

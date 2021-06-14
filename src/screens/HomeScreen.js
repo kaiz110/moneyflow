@@ -130,7 +130,7 @@ const HomeScreen = () => {
     }
 
     const modalConfirm = () => {
-        if(isNaN(+amountMoney) === false){
+        if(isNaN(+amountMoney) === false && +amountMoney != 0){
             dispatch(historySave({
                 type: isIn ? 'IN' : 'OUT',
                 amount: +amountMoney,
