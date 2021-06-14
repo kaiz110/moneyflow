@@ -32,4 +32,9 @@ export const rehydrateState = (stateObject) => {
         type: 'REHYDRATE_STATE',
         payload: stateObject
     }
+export const clearAll = () => {
+    return {
+        type: 'CLEAR_ALL'
+    }
+
 }

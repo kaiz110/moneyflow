@@ -22,6 +22,7 @@ const SignUpScreen = ({navigation}) => {
         <Input
             label='Password'
             placeholder='password'
+            secureTextEntry
             leftIcon={{ type: 'material-icons', name: 'lock' }}
             value={password}
             onChangeText={setPassword}

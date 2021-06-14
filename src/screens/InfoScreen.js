@@ -10,6 +10,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { AntDesign } from '@expo/vector-icons'
 import moment from 'moment'
 import DateTimePicker from '@react-native-community/datetimepicker'
+import NumberFormat from 'react-number-format';
 
 const DAY_FORMAT = 'YYYY-MM-DD'
 
@@ -138,7 +139,14 @@ const InfoScreen = ({navigation}) => {
                 : <AntDesign name='caretdown' size={17} style={{color: 'green',...styles.mH}}/>
                 }
 
-                <Text h4 style={styles.mH}>{item.amount}</Text>
+                <NumberFormat 
+                    value={item.amount} 
+                    displayType='text'
+                    thousandSeparator={true}
+                    renderText={value => (
+                        <Text h4 style={styles.mH}>{value}</Text>
+                    )}
+                />
 
                 <Text style={{marginLeft: 25, marginRight: 5}}>
                     {moment(item.time).format('DD/MM/YYYY HH:mm')}
@@ -200,7 +208,14 @@ const InfoScreen = ({navigation}) => {
 
             <Text style={{fontSize: 20}}>Số tiền đã {isOut ? 'chi' : 'thu'}</Text>
             <View style={styles.textSumContainer}>
-                <Text style={[styles.textSum, {color: isOut?'red':'green'}]}>{getSum(dateRange, isOut?'OUT':'IN')}</Text>
+                <NumberFormat 
+                    value={getSum(dateRange, isOut?'OUT':'IN')} 
+                    displayType='text'
+                    thousandSeparator={true}
+                    renderText={value => (
+                        <Text style={[styles.textSum, {color: isOut?'red':'green'}]}>{value}</Text>
+                    )}
+                />
             </View>
 
             <View style={styles.datepickerContainer}>
