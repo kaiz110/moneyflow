@@ -2,7 +2,7 @@ import React,{ useEffect, createRef } from 'react'
 import { View, StyleSheet, Modal, TouchableWithoutFeedback, ScrollView } from 'react-native'
 import { Input, Button, Text } from 'react-native-elements'
 
-const InputModal = ({title, confirm ,input, inputChange, note, noteChange, showModal, onClose , children}) => {
+const InputModal = ({title, confirm ,input, inputChange, note, noteChange, showModal, onClose , children ,secondLabel = 'Ghi chú'}) => {
     const inputRef = createRef()
 
     useEffect(() => {
@@ -24,8 +24,13 @@ const InputModal = ({title, confirm ,input, inputChange, note, noteChange, showM
 
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                 <View style={styles.container}>
-                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{alignItems: 'center'}}>
+                    <ScrollView 
+                        showsVerticalScrollIndicator={false} 
+                        contentContainerStyle={{alignItems: 'center'}}
+                        keyboardShouldPersistTaps='always'
+                    >
                         <Text h3 style={{margin: 10}}>{title}</Text>
+                        {input != undefined &&
                         <Input
                             ref={inputRef}
                             value={input}
@@ -33,13 +38,14 @@ const InputModal = ({title, confirm ,input, inputChange, note, noteChange, showM
                             label='Số tiền'
                             keyboardType='number-pad'
                         />
+                        }
                         <Input
                             value={note}
                             onChangeText={noteChange}
 
                             multiline
 
-                            label='Ghi chú'
+                            label={secondLabel}
                         />
 
                         {children}

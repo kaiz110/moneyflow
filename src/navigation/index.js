@@ -6,9 +6,13 @@ import HomeScreen from '../screens/HomeScreen'
 import InfoScreen from '../screens/InfoScreen'
 import SignInScreen from '../screens/SignInScreen'
 import SignUpScreen from '../screens/SignUpScreen'
+import SettingScreen from '../screens/SettingScreen'
 import firebase from 'firebase'
 import 'firebase/auth'
 import 'firebase/database'
+import { rehydrateState } from '../redux/actions'
+import { getValue } from '../firebase'
+import { useDispatch } from 'react-redux'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -21,6 +25,13 @@ const Login = () => {
 }
 
 const Home = () => {
+    return <Stack.Navigator>
+        <Stack.Screen name='Main' component={Main} options={{headerShown: false}}/>
+        <Stack.Screen name='SettingScreen' component={SettingScreen}/>
+    </Stack.Navigator>
+}
+//
+const Main = () => {
     return <Tab.Navigator>
         <Tab.Screen name='HomeScreen' component={HomeScreen}/>
         <Tab.Screen name='InfoScreen' component={InfoScreen}/>
@@ -28,6 +39,7 @@ const Home = () => {
 }
 
 export default () => {
+    const dispatch = useDispatch()
     const [isLogin, setIsLogin] = useState(false)
 
     useEffect(() => {
@@ -45,7 +57,18 @@ export default () => {
         firebase.initializeApp(firebaseConfig)
 
         firebase.auth().onAuthStateChanged(user => {
-            if(user) setIsLogin(true)
+            if(user) {
+                getValue(snapshot => {
+                    const val = snapshot.val()
+                    if(val.history || val.tags){
+                        dispatch(rehydrateState({
+                            history: val.history || [],
+                            tags: val.tags || []
+                        }))
+                    }
+                })
+                setIsLogin(true)
+            }
             else setIsLogin(false)
         })
     },[])
