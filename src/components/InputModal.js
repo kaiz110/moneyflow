@@ -53,7 +53,7 @@ const InputModal = ({title, confirm ,input, inputChange, note, noteChange, showM
                         <View style={{flexDirection: 'row'}}>
                             <Button
                                 containerStyle={styles.button}
-                                title='CANCEL'
+                                title='HỦY'
                                 onPress={onClose}
                             />
                             <Button

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native'
-import { Button, Text, Chip } from 'react-native-elements'
+import { Button, Text, Chip, Overlay } from 'react-native-elements'
 import { useSelector, useDispatch } from 'react-redux'
-import { addTag, editTag, delTag } from '../redux/actions'
+import { addTag, editTag, delTag, clearAll } from '../redux/actions'
 import InputModal from '../components/InputModal'
 import firebase from 'firebase'
 import AntDesign from '@expo/vector-icons/AntDesign'
@@ -20,7 +20,8 @@ const SettingScreen = () => {
     const [ tag, setTag ] = useState('')
     const [ showAdd, setShowAdd ] = useState('')
     const [ showEdit, setShowEdit ] = useState('')
-    const [ currentTag, setCurrentTag ] = useState('') //
+    const [ currentTag, setCurrentTag ] = useState('')
+    const [ modalDel, setModalDel ] = useState(false)
 
     useEffect(() => {
         upload('tags',tags)
@@ -59,7 +60,7 @@ const SettingScreen = () => {
             <Text style={styles.title}>{getSum(history, 'IN')}</Text>
         </View>
 
-        <Text style={styles.title}>Tag Edit</Text>
+        <Text style={styles.title}>Tag</Text>
 
         <FlatList
             data={tags}
@@ -91,10 +92,27 @@ const SettingScreen = () => {
         />
 
         <Button
+            title='Xóa dữ liệu'
+            buttonStyle={{margin: 20, marginBottom: 0}}
+            onPress={() => setModalDel(true)}
+        />
+
+        <Button
             title='Đăng xuất'
             buttonStyle={{margin: 20}}
             onPress={() => firebase.auth().signOut()}
         />
+
+        <Overlay isVisible={modalDel} onBackdropPress={() => setModalDel(false)}>
+            <Text style={{fontSize: 16, margin: 10, fontWeight: 'bold'}}>Có muốn xóa hết dữ liệu không?</Text>
+            <Button
+                title='Có'
+                onPress={() => {
+                    dispatch(clearAll())
+                    setModalDel(false)
+                }}
+            />
+        </Overlay>
 
         <InputModal
             showModal={showAdd}
@@ -127,6 +145,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 18,
+        fontWeight: 'bold',
         margin: 5
     }
 })

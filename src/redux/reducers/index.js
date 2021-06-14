@@ -23,6 +23,8 @@ const reducer = (state = initalState, action) => {
             return {...state, history: [...state.history, action.payload]}
         case 'REHYDRATE_STATE':
             return {history: action.payload.history, tags: action.payload.tags}
+        case 'CLEAR_ALL':
+            return {history: [], tags: []}
         default:
             return state
     }

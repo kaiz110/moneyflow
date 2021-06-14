@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from 'react'
-import { StyleSheet, View, Text, Button,
+import { StyleSheet, View, Text, Button, SafeAreaView,
     Animated, FlatList, PanResponder, Dimensions, TouchableOpacity } from 'react-native'
 import { Chip } from 'react-native-elements'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -143,7 +143,7 @@ const HomeScreen = () => {
         setModalVisible(false)
     }
 
-    return <View style={styles.container}>  
+    return <SafeAreaView style={styles.container}>  
         <LinearGradientAnimated
             colors={['red','transparent']}
             style={zoneColor(-SCREEN_HEIGHT/4)}
@@ -153,17 +153,17 @@ const HomeScreen = () => {
             style={zoneColor(SCREEN_HEIGHT/4)}
         />
         
-        <Text style={[styles.text, {top: 10}]}>OUT</Text>
+        <Text style={[styles.text, {top: 10}]}>RA</Text>
         <Animated.View 
             style={[position.getLayout(),styles.card,
                 { transform : [{scale}] , opacity: cardOpacity }]}
             {...pan.panHandlers}
         />
-        <Text style={[styles.text, {bottom: 10}]}>IN</Text>
+        <Text style={[styles.text, {bottom: 10}]}>VÀO</Text>
 
         <InputModal
             showModal={modalVisible}
-            title={isIn ? 'In' : 'Out'}
+            title={isIn ? 'Tiền Ra' : 'Tiền Vào'}
             input={amountMoney}
             inputChange={setAmountMoney}
             note={note}
@@ -198,7 +198,7 @@ const HomeScreen = () => {
             : null  
             }
         </InputModal>
-    </View>
+    </SafeAreaView>
 }
 
 const styles = StyleSheet.create({

@@ -13,6 +13,7 @@ import 'firebase/database'
 import { rehydrateState } from '../redux/actions'
 import { getValue } from '../firebase'
 import { useDispatch } from 'react-redux'
+import { Feather } from '@expo/vector-icons'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -23,19 +24,37 @@ const Login = () => {
         <Stack.Screen name='SignUpScreen' component={SignUpScreen} options={{title: 'Register'}}/>
     </Stack.Navigator>
 }
+//
+const Main = () => {
+    return <Tab.Navigator>
+        <Tab.Screen 
+            name='HomeScreen' 
+            component={HomeScreen} 
+            options={{
+                headerShown: false,
+                tabBarShowLabel: false,
+                tabBarIcon: ({color, size}) => (
+                    <Feather name='credit-card' color={color} size={size}/>
+                )
+            }}/>
+        <Tab.Screen 
+            name='InfoScreen' 
+            component={InfoScreen}
+            options={{
+                title: 'Dữ liệu',
+                tabBarShowLabel: false,
+                tabBarIcon: ({color, size}) => (
+                    <Feather name='list' color={color} size={size}/>
+                )
+            }}/>
+    </Tab.Navigator>
+}
 
 const Home = () => {
     return <Stack.Navigator>
         <Stack.Screen name='Main' component={Main} options={{headerShown: false}}/>
-        <Stack.Screen name='SettingScreen' component={SettingScreen}/>
+        <Stack.Screen name='SettingScreen' component={SettingScreen} options={{title: 'Cài đặt'}}/>
     </Stack.Navigator>
-}
-//
-const Main = () => {
-    return <Tab.Navigator>
-        <Tab.Screen name='HomeScreen' component={HomeScreen}/>
-        <Tab.Screen name='InfoScreen' component={InfoScreen}/>
-    </Tab.Navigator>
 }
 
 export default () => {
@@ -60,7 +79,7 @@ export default () => {
             if(user) {
                 getValue(snapshot => {
                     const val = snapshot.val()
-                    if(val.history || val.tags){
+                    if(val != null){
                         dispatch(rehydrateState({
                             history: val.history || [],
                             tags: val.tags || []
